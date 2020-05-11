@@ -1,6 +1,18 @@
 #%%
 from defines import getCreds, makeApiCall
 
+#%%
+permalink =[]
+id = []
+caption = []
+media_type = []
+comments = []
+comment_n = []
+post_date = []
+post_n = 100
+comments = [[] for i in range(post_n)]
+
+#%%
 def getUserMedia( params ) :
 	""" Get users media
 	
@@ -17,17 +29,15 @@ def getUserMedia( params ) :
 	url = params['endpoint_base'] + params['instagram_account_id'] + '/media' # endpoint url
 
 	return makeApiCall( url, endpointParams, params['debug'] ) # make the api call
-
+#%%
+#%%
 params = getCreds() # get creds
 response = getUserMedia( params ) # get users media from the api
-permalink =[]
-id = []
-caption = []
-media_type = []
-comments = []
-comment_n = []
-post_date = []
-
+print(response)
+#%%
+params = getCreds() # get creds
+response = getUserMedia( params ) # get users media from the api
+i=0
 for post in response['json_data']['data']:
 	n=0
 	permalink.append(post['permalink']) # link to post
@@ -36,9 +46,10 @@ for post in response['json_data']['data']:
 	media_type.append(post['media_type']) # type of media
 	if 'comments' in post.keys():
 		for comment in post['comments']['data']:
-			print(comment)
+			comments[i].append(comment['text'])
 			n+=1
-			comments.append(comment['text'])
+			#comments.append(comment['text'])
+	i+=1
 	comment_n.append(n)
 		
 	post_date.append(post['timestamp']) # when it was posted
@@ -47,16 +58,15 @@ for post in response['json_data']['data']:
 		params['metric'] = 'engagement,impressions,reach,saved,video_views'
 	else : # media is an image
 		params['metric'] = 'engagement,impressions,reach,saved'
-#%%
-print(caption)
+
 #%%
 import csv
 caption_body = []
 caption_tag = []
 capt = caption
-f = open('output_usermedia.csv', 'w', encoding='utf-8', newline='')
+f = open('output_usermedia1.csv', 'w', encoding='utf-8', newline='')
 wr = csv.writer(f)
-wr.writerow(['permalink', 'id', 'caption_body','caption_tag' 'media_type', 'comments', 'comment_n', 'post_date'])
+wr.writerow(['permalink', 'id', 'caption_body','caption_tag', 'media_type', 'comments', 'comment_n', 'post_date'])
 for i in range(len(id)):
 	capt_l = capt[i].replace('\n','').split('#')
 	capt_body= capt_l[0]
@@ -65,14 +75,3 @@ for i in range(len(id)):
 f.close()
 
 #'permalink', 'id', 'caption', 'media_type', 'comments', 'comment_n', 'post_date'
-
-#%%
-for i in range(30):
-	caption_line = capt[i].replace('\n','').split('#')
-	caption_body = caption_line[0]
-	caption_tag = caption_line[1:len(caption_line)-1]
-	print(caption_body)
-	print(caption_tag)
-#%%
-caption_tag
-# %%

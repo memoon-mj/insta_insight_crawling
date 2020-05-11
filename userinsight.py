@@ -2,6 +2,11 @@
 from defines import getCreds, makeApiCall
 import time, datetime 
 from datetime import timedelta
+import csv
+#%%
+current_time = time.time()
+past_time = (datetime.datetime.now() - timedelta(days=30)).timestamp()
+print(current_time, past_time)
 #%%
 def getUserInsights( params ) :
 	""" Get insights for a users account
@@ -11,8 +16,7 @@ def getUserInsights( params ) :
 	Returns:
 		object: data from the endpoint
 	"""
-	current_time = time.time()
-	past_time = (datetime.datetime.now() - timedelta(days=30)).timestamp()
+	
 	endpointParams = dict() # parameter to send to the endpoint
 	endpointParams['metric'] = 'follower_count,impressions,profile_views,reach' # fields to get back
 	endpointParams['period'] = 'day' # period
@@ -47,12 +51,11 @@ def createDate():
 	return end_time
 #%%
 #'end_time','follower_count','impressions','profile_views','reach'를 변수로 하는 'output.csv' 생성
-import csv
 end_time = createDate()
-f = open('output.csv', 'w', encoding='utf-8', newline='')
+f = open('output_userinsight1.csv', 'w', encoding='utf-8', newline='')
 wr = csv.writer(f)
 wr.writerow(['end_time','follower_count','impressions','profile_views','reach'])
-for i in range(29):
+for i in range(30):
 	wr.writerow([end_time[i], all_values[i], all_values[30+i], all_values[60+i], all_values[90+i]])
 f.close()
 
